@@ -2,8 +2,9 @@
 using Backend.DTOs;
 using Backend.Entity;
 using Backend.Helpers;
+using iText.Html2pdf;
 using Microsoft.EntityFrameworkCore;
-
+using System.Text.RegularExpressions;
 namespace Backend.Service
 {
     public class TemplateService : ITemplateService
@@ -43,9 +44,13 @@ namespace Backend.Service
                 var newTemplate = new Template
                 {
                     Name = dto.Name,
-                    Content = dto.Content
+                    Content = dto.Content,
+                    Placeholders = Regex.Matches(dto.Content, @"\*\*(.+?)\*\*")
+                        .Select(m => m.Value)
+                        .ToList()
                 };
                 await _context.Templates.AddAsync(newTemplate);
+                await _context.SaveChangesAsync();
                 return Result<bool>.Success(true);
             }
             catch (Exception ex)
@@ -69,7 +74,10 @@ namespace Backend.Service
                 {
                     Id = oldTemplate.Id,
                     Name = dto.Name,
-                    Content = dto.Content
+                    Content = dto.Content,
+                    Placeholders = Regex.Matches(dto.Content, @"\*\*(.+?)\*\*")
+                        .Select(m => m.Value)
+                        .ToList()
                 };
 
                 _context.Templates.Update(newTemplate);
@@ -92,7 +100,9 @@ namespace Backend.Service
                     {
                         Id = x.Id,
                         Name = x.Name,
-                        Content = x.Content
+                        Content = x.Content,
+                        Placeholders = x.Placeholders
+
                     }).ToListAsync();
                 return Result<List<GetTemplateDto>>.Success(templates);
             }
@@ -102,13 +112,13 @@ namespace Backend.Service
             }
         }
 
-        public async Task<Result<GetTemplateDto>> GetTemplate(GetTemplateDto dto)
+        public async Task<Result<GetTemplateDto>> GetTemplate(Guid id)
         {
             try
             {
                 var template = await _context.Templates
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Id == dto.Id);
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (template == null)
                 {
@@ -118,7 +128,8 @@ namespace Backend.Service
                 {
                     Id = template.Id,
                     Name = template.Name,
-                    Content = template.Content
+                    Content = template.Content,
+                    Placeholders = template.Placeholders
                 })!;
             }
             catch (Exception ex)
@@ -126,5 +137,28 @@ namespace Backend.Service
                 return Result<GetTemplateDto>.Fail($"{ex.InnerException} {ex.Message}")!;
             }
         }
-    }
+
+        public async Task<Result<byte[]>> GeneratePdf(GeneratePdfDto dto)
+        {
+            var templateResult = await GetTemplate(dto.TemplateId);
+            if (!templateResult.IsSuccess)
+                return Result<byte[]>.Fail("Template not found")!;
+
+            var template = templateResult.Value;
+
+            foreach (KeyValuePair<string,string> placeholder in dto.PlaceholderValues)
+            {
+                template.Content = template.Content.Replace(placeholder.Key, placeholder.Value);
+            }
+
+            byte[] pdfBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                HtmlConverter.ConvertToPdf(template.Content, memoryStream);
+                pdfBytes = memoryStream.ToArray();
+            }
+
+            return Result<byte[]>.Success(pdfBytes);
+        }
+    }   
 }

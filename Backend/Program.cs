@@ -11,16 +11,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<ITemplateService, TemplateService>();
-
+builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var databaseExists = await dbContext.Database.CanConnectAsync();
+
+    if (!databaseExists)
+    {
+        await Seeder.CreateDb(dbContext);
+    }
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

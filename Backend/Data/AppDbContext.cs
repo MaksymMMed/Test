@@ -23,6 +23,10 @@ namespace Backend.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Content).IsRequired();
+                entity.Property(e => e.Placeholders)
+                      .HasConversion(
+                          v => string.Join(',', v),
+                          v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
             });
         }
     }
