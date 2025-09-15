@@ -1,14 +1,23 @@
 
 services:
+  frontend:
+    image: ${DOCKER_REGISTRY:-}frontend
+    restart: always
+    build: ./frontend
+    ports:
+      - "3000:80"
+
   backend:
-    image: ${DOCKER_REGISTRY-}backend
+    image: ${DOCKER_REGISTRY:-}backend
+    restart: always
+    build: ./Backend
+    ports: 
+      - "3001:8080"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
       DB_CONNECTION_STRING: Server=mssql;Database=AppDbContext;User=sa;Password=YourStrong@Password;TrustServerCertificate=True;
     depends_on:
         mssql:
             condition: service_healthy
-            restart: true
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

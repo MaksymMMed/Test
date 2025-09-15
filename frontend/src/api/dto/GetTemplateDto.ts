@@ -1,6 +1,8 @@
-interface GetTemplateDto{
-    Id:string,
-    Name:string,
-    Content:string,
-    Placeholders:string[]
+export interface GetTemplateDto{
+    id:string,
+    name:string,
+    content:string,
+    placeholders:string[]
 }
+
+export {}

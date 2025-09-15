@@ -1,5 +1,7 @@
-interface UpdateTemplateDto{
-    Id:string,
-    Name:string,
-    Content:string
+export interface UpdateTemplateDto{
+    id:string,
+    name:string,
+    content:string
 }
+
+export {}

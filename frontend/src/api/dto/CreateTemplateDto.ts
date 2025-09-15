@@ -1,4 +1,6 @@
-interface CreateTemplateDto{
-    Name:string,
-    Content:string
+export interface CreateTemplateDto{
+    name:string,
+    content:string
 }
+
+export {}

@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import TemplatesApi from './api/TemplatesApi';
+import { GetTemplateDto } from './api/dto/GetTemplateDto';
 
 function App() {
+  
+const templateApi = new TemplatesApi();
+const [templates,setTemplates] = useState<GetTemplateDto[] | null>(null)
+
+useEffect(() => {
+    const fetchTemplates = async () => {
+        try {
+            const templates = await templateApi.GetAllTemplates();
+            console.log(templates);
+            setTemplates(templates);
+        } catch (err) {
+            console.error("Помилка при отриманні шаблонів:", err);
+        }
+    };
+
+    fetchTemplates();
+}, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {templates?.map(x => (
+            <div style={{color:"red"}} key={x.id}>
+                <p>{x.id}</p>
+                <p>{x.name}</p>
+                {x.content}
+                {x.placeholders}
+            </div>
+        ))}
     </div>
   );
 }

@@ -1,4 +1,6 @@
-interface GeneratePdfDto{
-    TemplateId:string,
-    PlaceholderValues: Record<string, string>;
+export interface GeneratePdfDto{
+    templateId:string,
+    placeholderValues: Record<string, string>;
 }
+
+export {}

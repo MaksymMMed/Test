@@ -1,4 +1,8 @@
 import axios from "axios";
+import { UpdateTemplateDto } from "./dto/UpdateTemplateDto";
+import { CreateTemplateDto } from "./dto/CreateTemplateDto";
+import { GetTemplateDto } from "./dto/GetTemplateDto";
+import { GeneratePdfDto } from "./dto/GeneratePdfDto";
 
 class TemplatesApi {
     apiPath: string = "http://localhost:3001/API";
@@ -68,3 +72,5 @@ public async GeneratePdf(dto: GeneratePdfDto): Promise<void> {
     }
 }
 }
+
+export default TemplatesApi
