@@ -2,6 +2,28 @@
   text-align: center;
 }
 
+.add-template-button{
+    width: 55px;          
+    height: 55px;         
+    border-radius: 50%;   
+    border: none;
+    background-color: #2E86C1;
+    color: white;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;        
+    align-items: center;
+    justify-content: center;
+    position: absolute;       
+    bottom: 35px;             
+    right: 35px;              
+    transition: transform 0.2s;
+}
+
+.add-template-button:hover {
+  transform: scale(1.1);
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
