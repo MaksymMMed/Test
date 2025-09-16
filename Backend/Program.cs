@@ -33,7 +33,7 @@ using (var scope = app.Services.CreateScope())
 
     if (!databaseExists)
     {
-        await Seeder.CreateDb(dbContext);
+        await new Seeder().CreateDb(dbContext);
     }
 }
 
