@@ -31,13 +31,23 @@ export default function MainTemplatePopup({ onClose, onSaved,onDeleted,item }: M
         name,
         content
     };
+    try{
 
-    const success = await templateApi.UpdateTemplate(dto);
-    if (success) {
-      onSaved();
-      onClose();
-    } else {
-      alert("Помилка при оновленні шаблону");
+      const success = await templateApi.UpdateTemplate(dto);
+      if (success) {
+        onSaved();
+        onClose();
+      } else {
+        alert("Помилка при створенні шаблону");
+      }
+    } catch (error: any) {
+      if (error.response) {
+        alert(`Помилка: ${error.message}`);
+      } else if (error.message) {
+        alert(`Помилка: ${error.message}`);
+      } else {
+        alert("Невідома помилка");
+      }
     }
   };
 

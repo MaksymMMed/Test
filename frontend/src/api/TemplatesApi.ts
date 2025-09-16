@@ -6,18 +6,43 @@ import { GeneratePdfDto } from "./dto/GeneratePdfDto";
 
 class TemplatesApi {
     apiPath: string = "http://localhost:3001/API";
+    
+    private isValidHtml(html: string): string[] {
+        const errors: string[] = [];
+
+        const parser = new DOMParser();
+        const cleanedHtml = html.replace(/\*\*.*?\*\*/g, "PLACEHOLDER").trimStart();
+        const doc = parser.parseFromString(cleanedHtml, "application/xhtml+xml");
+
+        const parseErrors = doc.querySelectorAll("parsererror");
+        parseErrors.forEach(err => errors.push(err.textContent || "Unknown parse error"));
+
+         return errors;
+        }
 
     public async CreateTemplate(dto: CreateTemplateDto): Promise<boolean> {
-        try {
-            const response = await axios.post<boolean>(`${this.apiPath}/template`, dto);
-            return response.data;
-        } catch (err) {
-            throw err;
+    try {
+        const errors = this.isValidHtml(dto.content);
+        if (errors.length > 0) {
+            console.error("HTML помилки:", errors);
+            throw new Error("HTML шаблон не валідний",);
         }
+
+        const response = await axios.post<boolean>(`${this.apiPath}/template`, dto);
+        return response.data;
+    } catch (err) {
+        console.error("Помилка при створенні шаблону:", err);
+        throw err;
     }
+}
 
     public async UpdateTemplate(dto: UpdateTemplateDto): Promise<boolean> {
         try {
+            const errors = this.isValidHtml(dto.content);
+            if (errors.length > 0) {
+                console.error("HTML помилки:", errors);
+                throw new Error("HTML шаблон не валідний");
+            }
             const response = await axios.put<boolean>(`${this.apiPath}/template`, dto);
             return response.data;
         } catch (err) {

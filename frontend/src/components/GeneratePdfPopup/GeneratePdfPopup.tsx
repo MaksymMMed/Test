@@ -42,6 +42,7 @@ export default function MainTemplatePopup({ onClose, item }: MainTemplatePopupPr
                 {key}:
                 <input
                   type="text"
+                  required
                   value={placeholderValues[key] || ""}
                   onChange={(e) =>
                     setPlaceholderValues((prev) => ({ ...prev, [key]: e.target.value }))

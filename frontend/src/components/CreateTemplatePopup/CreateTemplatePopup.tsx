@@ -36,13 +36,24 @@ export default function CreateTemplatePopup({ onClose, onCreated }: TemplatePopu
       content
     };
 
+    try {
     const success = await templateApi.CreateTemplate(dto);
+
     if (success) {
       onCreated();
       onClose();
     } else {
       alert("Помилка при створенні шаблону");
     }
+  } catch (error: any) {
+    if (error.response) {
+      alert(`Помилка: ${error.message}`);
+    } else if (error.message) {
+      alert(`Помилка: ${error.message}`);
+    } else {
+      alert("Невідома помилка");
+    }
+  }
   };
 
   return (
