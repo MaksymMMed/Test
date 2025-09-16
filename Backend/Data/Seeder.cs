@@ -9,7 +9,7 @@ namespace Backend.Data
         <!DOCTYPE html>
         <html>
         <head>
-            <meta charset='utf-8'>
+            <meta charset='utf-8'/>
             <title>PDF</title>
             <style>
                 body {{ font-family: Arial, sans-serif; font-size: 14px; color: #333; }}
@@ -29,7 +29,7 @@ namespace Backend.Data
         <!DOCTYPE html>
         <html>
         <head>
-            <meta charset='utf-8'>
+            <meta charset='utf-8'/>
             <title>Registration Confirmation</title>
             <style>
                 body {{ font-family: Arial, sans-serif; font-size: 14px; color: #333; }}
@@ -49,7 +49,7 @@ namespace Backend.Data
         <!DOCTYPE html>
                 <html>
                 <head>
-                    <meta charset='utf-8'>
+                    <meta charset='utf-8'/>
                     <title>PDF</title>
                     <style>
                         body {{ font-family: Arial, sans-serif; font-size: 14px; color: #333; }}
@@ -67,9 +67,9 @@ namespace Backend.Data
         public async Task CreateDb(AppDbContext dbContext)
         {
             await dbContext.Database.MigrateAsync();
-            await dbContext.Templates.AddAsync(new Template { Id = Guid.NewGuid(), Name = "Invoice", Content = Invoice, Placeholders = new List<string>() {"**Sum**","**SenderName**","**ReceiverName**"}});
-            await dbContext.Templates.AddAsync(new Template { Id = Guid.NewGuid(), Name = "Registration email", Content = RegistrationEmail, Placeholders = new List<string>() { "**UserName**", "**SiteName**" } });
-            await dbContext.Templates.AddAsync(new Template { Id = Guid.NewGuid(), Name = "Notification", Content = Notification, Placeholders = new List<string>() { "**UserName**", "**Person**","**Date**" } });
+            await dbContext.Templates.AddAsync(new Template { Id = Guid.NewGuid(), Name = "Invoice", Content = Invoice.Replace("\r",""), Placeholders = new List<string>() {"**Sum**","**SenderName**","**ReceiverName**"}});
+            await dbContext.Templates.AddAsync(new Template { Id = Guid.NewGuid(), Name = "Registration email", Content = RegistrationEmail.Replace("\r", ""), Placeholders = new List<string>() { "**UserName**", "**SiteName**" } });
+            await dbContext.Templates.AddAsync(new Template { Id = Guid.NewGuid(), Name = "Notification", Content = Notification.Replace("\r", ""), Placeholders = new List<string>() { "**UserName**", "**Person**","**Date**" } });
             await dbContext.SaveChangesAsync();
         }
     }
